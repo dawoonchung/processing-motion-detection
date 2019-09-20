@@ -274,7 +274,7 @@ void displayImages() {
     // image(processedImage, src.width, src.height);
     // noStroke();
     // fill(0);
-    // rect(src.width, src.height, src.width, src.height);
+    rect(src.width, src.height, src.width, src.height);
   popMatrix();
 
   stroke(255);
