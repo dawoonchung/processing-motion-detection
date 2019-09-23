@@ -41,7 +41,7 @@ int threshold = 75;
 boolean useAdaptiveThreshold = false; // Use basic thresholding by default
 int thresholdBlockSize = 489;
 int thresholdConstant = 45;
-int blobSizeThreshold = 20;
+int blobSizeThreshold = 200;
 int blurSize = 4;
 
 // Control variables
@@ -93,7 +93,7 @@ void initControls() {
   cp5.addSlider("blobSizeThreshold")
     .setLabel("Minimum blob size")
     .setPosition(20, 290)
-    .setRange(0, 60);
+    .setRange(0, 600);
 
   // Store the default background color, we will need it later
   buttonColor = cp5.getController("contrast").getColor().getForeground();
@@ -274,7 +274,6 @@ void displayImages() {
     // image(processedImage, src.width, src.height);
     // noStroke();
     // fill(0);
-    rect(src.width, src.height, src.width, src.height);
   popMatrix();
 
   stroke(255);
@@ -338,7 +337,7 @@ void setup() {
 
   // Setup camera.
   // printArray(Capture.list()); // Use this to check available cameras.
-  // video = new Capture(this, width, height);
+  // video = new Capture(this, frameWidth, frameHeight);
   video = new Capture(this, frameWidth, frameHeight, "USB 2.0 Camera #2");
   video.start();
 
@@ -377,6 +376,7 @@ void captureEvent(Capture video) {
 
   // Apply image adjustments (for now, only contrast)
   opencv.contrast(contrast);
+  // opencv.brightness(brightness);
 
   // Store adjusted frame
   adjustedImage = opencv.getSnapshot();
