@@ -274,7 +274,7 @@ void displayImages() {
     // image(processedImage, src.width, src.height);
     // noStroke();
     // fill(0);
-    rect(src.width, src.height, src.width, src.height);
+    // rect(src.width, src.height, src.width, src.height);
   popMatrix();
 
   stroke(255);
@@ -335,11 +335,11 @@ void displayContoursBoundingBoxes() {
  */
 void setup() {
   size(840, 480, P2D);
-
+  // frameRate();
   // Setup camera.
   // printArray(Capture.list()); // Use this to check available cameras.
-  // video = new Capture(this, width, height);
-  video = new Capture(this, frameWidth, frameHeight, "USB 2.0 Camera #2");
+  video = new Capture(this, frameWidth, frameHeight);
+  // video = new Capture(this, frameWidth, frameHeight, "USB 2.0 Camera");
   video.start();
 
   // Configure openCV
