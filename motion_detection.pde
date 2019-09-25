@@ -38,9 +38,6 @@ int blobCount = 0; // Number of detected blobs over all time. Used to set IDs
 float contrast = 1.35;
 int brightness = 0;
 int threshold = 75;
-boolean useAdaptiveThreshold = false; // Use basic thresholding by default
-int thresholdBlockSize = 489;
-int thresholdConstant = 45;
 int blobSizeThreshold = 40;
 int blurSize = 10;
 
@@ -65,34 +62,16 @@ void initControls() {
     .setPosition(20, 110)
     .setRange(0, 255);
 
-  // Toggle to activae adaptive threshold
-  cp5.addToggle("toggleAdaptiveThreshold")
-    .setLabel("Use adaptive threshold (A.T.)")
-    .setSize(10, 10)
-    .setPosition(20, 144);
-
-  // Slider for adaptive threshold block size
-  cp5.addSlider("thresholdBlockSize")
-    .setLabel("A.T. block size")
-    .setPosition(20, 180)
-    .setRange(1, 700);
-
-  // Slider for adaptive threshold constant
-  cp5.addSlider("thresholdConstant")
-    .setLabel("A.T. constant")
-    .setPosition(20, 200)
-    .setRange(-100, 100);
-
   // Slider for blur size
   cp5.addSlider("blurSize")
     .setLabel("Blur size")
-    .setPosition(20, 260)
+    .setPosition(20, 170)
     .setRange(1, 20);
 
   // Slider for minimum blob size
   cp5.addSlider("blobSizeThreshold")
     .setLabel("Minimum blob size")
-    .setPosition(20, 290)
+    .setPosition(20, 230)
     .setRange(0, 100);
 
   // Store the default background color, we will need it later
@@ -100,43 +79,6 @@ void initControls() {
   buttonBgColor = cp5.getController("contrast").getColor().getBackground();
 }
 
-/**
- * To enable or disable controllers
- */
-void setLock(Controller controller, boolean value) {
-  controller.setLock(value);
-
-  if (value) {
-    controller.setColorBackground(color(150, 150));
-    controller.setColorForeground(color(100, 100));
-  } else {
-    controller.setColorBackground(color(buttonBgColor));
-    controller.setColorForeground(color(buttonColor));
-  }
-}
-
-/**
- * Set adaptive threshold option
- */
-void toggleAdaptiveThreshold(boolean flag) {
-  useAdaptiveThreshold = flag;
-
-  if (useAdaptiveThreshold) {
-    // Lock basic threshold
-    setLock(cp5.getController("threshold"), true);
-
-    // Unlock adaptive threshold
-    setLock(cp5.getController("thresholdBlockSize"), false);
-    setLock(cp5.getController("thresholdConstant"), false);
-  } else {
-    // Unlock basic threshold
-    setLock(cp5.getController("threshold"), false);
-
-    // Lock adaptive threshold
-    setLock(cp5.getController("thresholdBlockSize"), true);
-    setLock(cp5.getController("thresholdConstant"), true);
-  }
-}
 
 /**
  * Contour analysis
@@ -336,7 +278,7 @@ void displayContoursBoundingBoxes() {
  */
 void setup() {
   size(1160, 720, P2D);
-  background(255, 255, 255);
+  // background(255, 255, 255);
   // frameRate();
   // Setup camera.
   // printArray(Capture.list()); // Use this to check available cameras.
@@ -356,9 +298,6 @@ void setup() {
   // Initialise controls
   cp5 = new ControlP5(this);
   initControls();
-
-  // Set thresholding
-  toggleAdaptiveThreshold(useAdaptiveThreshold);
 
   // Initialise empty image – this is needed as we are using captureEvent()
   src = createImage(frameWidth, frameHeight, RGB);
