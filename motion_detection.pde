@@ -40,6 +40,7 @@ int brightness = 0;
 int threshold = 75;
 int blobSizeThreshold = 40;
 int blurSize = 10;
+boolean showDetection = true;
 
 // Control variables
 ControlP5 cp5;
@@ -73,6 +74,10 @@ void initControls() {
     .setLabel("Minimum blob size")
     .setPosition(20, 230)
     .setRange(0, 100);
+    
+  cp5.addToggle("showDetection")
+    .setLabel("Show detected dots")
+    .setPosition(20, 230);
 
   // Store the default background color, we will need it later
   buttonColor = cp5.getController("contrast").getColor().getForeground();
