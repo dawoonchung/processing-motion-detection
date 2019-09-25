@@ -25,7 +25,6 @@ PImage src;
 PImage adjustedImage;
 PImage processedImage;
 PImage contoursImage;
-boolean showBackground = false;
 
 // Layer
 public PGraphics canvas;
@@ -47,6 +46,8 @@ int blurSize = 10;
 
 // Control variables
 ControlP5 cp5;
+boolean showBackground = false;
+boolean refresh = false;
 
 /**
  * Setup Control P5
@@ -84,6 +85,11 @@ void initControls() {
     .setColorLabel(color(0, 0, 0))
     .setLabel("Show background")
     .setPosition(20, 290);
+    
+  cp5.addToggle("refresh")
+    .setColorLabel(color(0, 0, 0))
+    .setLabel("Refresh")
+    .setPosition(20, 370);
 }
 
 /**
@@ -240,9 +246,14 @@ void displayImages() {
  */
 void displayBlobs(PGraphics canvas) {
   canvas.beginDraw();
-    for (Blob b : blobList) {
-    // strokeWeight(1);
-    b.display(canvas);
+    if (refresh) {
+      canvas.clear();
+      cp5.getController("refresh").setValue(0);
+    } else {
+      for (Blob b : blobList) {
+      // strokeWeight(1);
+      b.display(canvas);
+    }
   }
   canvas.endDraw();
   image(canvas, 0, 0);
@@ -293,8 +304,8 @@ void setup() {
   // frameRate();
   // Setup camera.
   // printArray(Capture.list()); // Use this to check available cameras.
-  // video = new Capture(this, frameWidth, frameHeight);
-  video = new Capture(this, frameWidth, frameHeight, "USB 2.0 Camera");
+  video = new Capture(this, frameWidth, frameHeight);
+  // video = new Capture(this, frameWidth, frameHeight, "USB 2.0 Camera");
   video.start();
 
   // Configure openCV
