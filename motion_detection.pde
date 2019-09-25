@@ -25,6 +25,10 @@ PImage src;
 PImage adjustedImage;
 PImage processedImage;
 PImage contoursImage;
+boolean showBackground = false;
+
+// Layer
+public PGraphics canvas;
 
 // Contour variables
 ArrayList<Contour> contours;
@@ -40,12 +44,9 @@ int brightness = 0;
 int threshold = 75;
 int blobSizeThreshold = 40;
 int blurSize = 10;
-boolean showDetection = true;
 
 // Control variables
 ControlP5 cp5;
-int buttonColor;
-int buttonBgColor;
 
 /**
  * Setup Control P5
@@ -53,37 +54,37 @@ int buttonBgColor;
 void initControls() {
   // Slider for contrast
   cp5.addSlider("contrast")
+    .setColorLabel(color(0, 0, 0))
     .setLabel("Contrast")
     .setPosition(20, 50)
     .setRange(0.0, 6.0);
 
   // Slider for threshold
   cp5.addSlider("threshold")
+    .setColorLabel(color(0, 0, 0))
     .setLabel("Threshold")
     .setPosition(20, 110)
     .setRange(0, 255);
 
   // Slider for blur size
   cp5.addSlider("blurSize")
+    .setColorLabel(color(0, 0, 0))
     .setLabel("Blur size")
     .setPosition(20, 170)
     .setRange(1, 20);
 
   // Slider for minimum blob size
   cp5.addSlider("blobSizeThreshold")
+    .setColorLabel(color(0, 0, 0))
     .setLabel("Minimum blob size")
     .setPosition(20, 230)
     .setRange(0, 100);
     
-  cp5.addToggle("showDetection")
-    .setLabel("Show detected dots")
-    .setPosition(20, 230);
-
-  // Store the default background color, we will need it later
-  buttonColor = cp5.getController("contrast").getColor().getForeground();
-  buttonBgColor = cp5.getController("contrast").getColor().getBackground();
+  cp5.addToggle("showBackground")
+    .setColorLabel(color(0, 0, 0))
+    .setLabel("Show background")
+    .setPosition(20, 290);
 }
-
 
 /**
  * Contour analysis
@@ -218,7 +219,7 @@ void displayImages() {
   translate(-src.width / 2, 0);
   image(src, 0, 0);
   // image(adjustedImage, src.width, 0);
-  // image(processedImage, 0, src.height);
+  // image(processedImage, 0, 0);
   // image(processedImage, src.width, src.height);
   // noStroke();
   // fill(0);
@@ -237,11 +238,14 @@ void displayImages() {
 /**
  * Display blob rectangles
  */
-void displayBlobs() {
-  for (Blob b : blobList) {
-    strokeWeight(1);
-    b.display();
+void displayBlobs(PGraphics canvas) {
+  canvas.beginDraw();
+    for (Blob b : blobList) {
+    // strokeWeight(1);
+    b.display(canvas);
   }
+  canvas.endDraw();
+  image(canvas, 0, 0);
 }
 
 /**
@@ -283,12 +287,14 @@ void displayContoursBoundingBoxes() {
  */
 void setup() {
   size(1160, 720, P2D);
+  canvas = createGraphics(frameWidth, frameHeight, P2D);
+  
   // background(255, 255, 255);
   // frameRate();
   // Setup camera.
   // printArray(Capture.list()); // Use this to check available cameras.
-  video = new Capture(this, frameWidth, frameHeight);
-  // video = new Capture(this, frameWidth, frameHeight, "USB 2.0 Camera");
+  // video = new Capture(this, frameWidth, frameHeight);
+  video = new Capture(this, frameWidth, frameHeight, "USB 2.0 Camera");
   video.start();
 
   // Configure openCV
@@ -330,24 +336,8 @@ void captureEvent(Capture video) {
   // Update background for motion tracking
   opencv.updateBackground();
 
-  // Apply threshold / adaptive threshold
-  // Adaptive threshold
-  if (useAdaptiveThreshold) {  
-    // Block size must be odd and greater than 3
-    if (thresholdBlockSize % 2 == 0) {
-      thresholdBlockSize += 1;
-    }
-
-    if (thresholdBlockSize < 3) {
-      thresholdBlockSize = 3;
-    }
-
-    opencv.adaptiveThreshold(thresholdBlockSize, thresholdConstant);
-
-    // Basic threshold - range [0, 255]
-  } else {
-    opencv.threshold(threshold);
-  }
+  // Apply threshold
+  opencv.threshold(threshold);
 
   // Reduce noise - Dilate and erode to close holes
   opencv.dilate();
@@ -358,7 +348,7 @@ void captureEvent(Capture video) {
 
   // Store processed frame
   processedImage = opencv.getSnapshot();
-
+  
   // Find contours
   detectBlobs();
 
@@ -373,19 +363,24 @@ void draw() {
   pushMatrix();
   // Leave space for controls
     translate(width - src.width, 0);
-  // Display frames
-   //displayImages();
+    
+    // Display frames
+    if (showBackground) {
+      displayImages();
+    } else {
+      background(220, 220, 220);
+    }
 
     // Display active area
-    //pushMatrix();
-    //  scale(2);
-    //  translate(-src.width / 2, 0);
+    // pushMatrix();
+    scale(2);
+    translate(-src.width / 2, 0);
       
-    //// displayContours();
-    //// displayContoursBoundingBoxes();
+    // displayContours();
+    // displayContoursBoundingBoxes();
     
       if (frameCount >= 150) {
-        displayBlobs();
+        displayBlobs(canvas);
       }
     //popMatrix();
   popMatrix();

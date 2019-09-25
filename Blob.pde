@@ -44,24 +44,24 @@ class Blob {
   }
 
   // Show me
-  void display() {
+  void display(PGraphics canvas) {
     Rectangle r = contour.getBoundingBox();
     
-    // colorMode(HSB, 100);
-    float h = map(this.id * 3, 0, 100, 0, 100);
+    canvas.colorMode(HSB, 100);
+    float h = map(this.id, 0, 100, 0, 100);
     // float opacity = map(timer, 0, initTimer, 50, 10);
     float size = map(timer, 0, initTimer, 20, 10);
-    fill(h, 50, 100, 5);
+    canvas.fill(h, 50, 100, 5);
     // fill(255, 0, 0);
     // stroke(0, 0, 255);
-    noStroke();
+    canvas.noStroke();
     // rect(r.x, r.y, r.width, r.height);
     // ellipse(r.x, r.y, 25, 25);
     // fill(255, 2 * opacity);
     // textSize(26);
     // text(""+id, r.x+10, r.y+30);
     
-    ellipse(r.x, r.y, size, size);
+    canvas.ellipse(r.x + (r.width / 2), r.y + (r.height / 2), size, size);
     
     //if (this.shape == 0) {
     //  rect(r.x - 12.5, r.y - 12.5, size, size);
