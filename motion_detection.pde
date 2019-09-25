@@ -17,8 +17,8 @@ Capture video;
 OpenCV opencv;
 
 // Frame size
-int frameWidth = 640;
-int frameHeight = 480;
+int frameWidth = 960 / 2;
+int frameHeight = 720 / 2;
 
 // Image variables
 PImage src;
@@ -41,8 +41,8 @@ int threshold = 75;
 boolean useAdaptiveThreshold = false; // Use basic thresholding by default
 int thresholdBlockSize = 489;
 int thresholdConstant = 45;
-int blobSizeThreshold = 20;
-int blurSize = 4;
+int blobSizeThreshold = 40;
+int blurSize = 10;
 
 // Control variables
 ControlP5 cp5;
@@ -93,7 +93,7 @@ void initControls() {
   cp5.addSlider("blobSizeThreshold")
     .setLabel("Minimum blob size")
     .setPosition(20, 290)
-    .setRange(0, 60);
+    .setRange(0, 100);
 
   // Store the default background color, we will need it later
   buttonColor = cp5.getController("contrast").getColor().getForeground();
@@ -267,23 +267,24 @@ void detectBlobs() {
  */
 void displayImages() {  
   pushMatrix();
-    scale(0.5);
-    image(src, 0, 0);
-    image(adjustedImage, src.width, 0);
-    image(processedImage, 0, src.height);
-    // image(processedImage, src.width, src.height);
-    // noStroke();
-    // fill(0);
-    // rect(src.width, src.height, src.width, src.height);
+  scale(2);
+  translate(-src.width / 2, 0);
+  image(src, 0, 0);
+  // image(adjustedImage, src.width, 0);
+  // image(processedImage, 0, src.height);
+  // image(processedImage, src.width, src.height);
+  // noStroke();
+  // fill(0);
+  // rect(src.width, src.height, src.width, src.height);
   popMatrix();
 
-  stroke(255);
-  fill(255);
-  textSize(12);
-  text("Source", 10, 25); 
-  text("Adjusted", src.width / 2 + 10, 25); 
-  text("Processed (Motion tracking)", 10, src.height / 2 + 25); 
-  text("Active points", src.width / 2 + 10, src.height / 2 + 25);
+  //stroke(255);
+  //fill(255);
+  //textSize(12);
+  //text("Source", 10, 25); 
+  //text("Adjusted", src.width / 2 + 10, 25); 
+  //text("Processed (Motion tracking)", 10, src.height / 2 + 25); 
+  //text("Active points", src.width / 2 + 10, src.height / 2 + 25);
 }
 
 /**
@@ -334,7 +335,8 @@ void displayContoursBoundingBoxes() {
  * Initial setup
  */
 void setup() {
-  size(840, 480, P2D);
+  size(1160, 720, P2D);
+  background(255, 255, 255);
   // frameRate();
   // Setup camera.
   // printArray(Capture.list()); // Use this to check available cameras.
@@ -425,19 +427,22 @@ void captureEvent(Capture video) {
  */
 void draw() {
   pushMatrix();
-    // Leave space for controls
+  // Leave space for controls
     translate(width - src.width, 0);
-  
-    // Display frames
-    displayImages();
-  
+  // Display frames
+   //displayImages();
+
     // Display active area
-    pushMatrix();
-      scale(0.5);
-      translate(src.width, src.height);
-      // displayContours();
-      // displayContoursBoundingBoxes();
-      displayBlobs();
-    popMatrix();
+    //pushMatrix();
+    //  scale(2);
+    //  translate(-src.width / 2, 0);
+      
+    //// displayContours();
+    //// displayContoursBoundingBoxes();
+    
+      if (frameCount >= 150) {
+        displayBlobs();
+      }
+    //popMatrix();
   popMatrix();
 }

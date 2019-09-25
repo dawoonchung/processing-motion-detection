@@ -23,7 +23,7 @@ class Blob {
   public boolean delete;
 
   // How long should I live if I have disappeared?
-  private int initTimer = 150; //127;
+  private int initTimer = 5; //127;
   public int timer;
 
   // Unique ID for each blob
@@ -46,9 +46,13 @@ class Blob {
   // Show me
   void display() {
     Rectangle r = contour.getBoundingBox();
-
-    float opacity = map(timer, 0, initTimer, 0, 127);
-    fill(0, 0, 255, 5);
+    
+    // colorMode(HSB, 100);
+    float h = map(this.id * 3, 0, 100, 0, 100);
+    // float opacity = map(timer, 0, initTimer, 50, 10);
+    float size = map(timer, 0, initTimer, 20, 10);
+    fill(h, 50, 100, 5);
+    // fill(255, 0, 0);
     // stroke(0, 0, 255);
     noStroke();
     // rect(r.x, r.y, r.width, r.height);
@@ -57,11 +61,13 @@ class Blob {
     // textSize(26);
     // text(""+id, r.x+10, r.y+30);
     
-    if (this.shape == 0) {
-      rect(r.x - 12.5, r.y - 12.5, 25, 25);
-    } else {
-      ellipse(r.x, r.y, 25, 25);
-    }
+    ellipse(r.x, r.y, size, size);
+    
+    //if (this.shape == 0) {
+    //  rect(r.x - 12.5, r.y - 12.5, size, size);
+    //} else {
+    //  ellipse(r.x, r.y, size, size);
+    //}
   }
 
   // Give me a new contour for this blob (shape, points, location, size)
@@ -86,7 +92,7 @@ class Blob {
   void countDown() {    
     timer--;
   }
-
+  
   // I am deed, delete me
   boolean dead() {
     if (timer < 0) return true;
